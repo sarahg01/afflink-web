@@ -23,7 +23,7 @@ type Post = {
   } | null;
 };
 
-type Link = { id: string; label: string; url: string };
+type AffLink = { id: string; label: string; url: string };
 
 function PostPage() {
   const { postId } = Route.useParams();
