@@ -28,7 +28,7 @@ type AffLink = { id: string; label: string; url: string };
 function PostPage() {
   const { postId } = Route.useParams();
   const [post, setPost] = useState<Post | null>(null);
-  const [links, setLinks] = useState<Link[]>([]);
+  const [links, setLinks] = useState<AffLink[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
