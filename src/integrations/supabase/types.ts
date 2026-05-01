@@ -14,13 +14,137 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      affiliate_links: {
+        Row: {
+          clicks: number
+          created_at: string
+          id: string
+          label: string
+          position: number
+          post_id: string
+          url: string
+          user_id: string
+        }
+        Insert: {
+          clicks?: number
+          created_at?: string
+          id?: string
+          label: string
+          position?: number
+          post_id: string
+          url: string
+          user_id: string
+        }
+        Update: {
+          clicks?: number
+          created_at?: string
+          id?: string
+          label?: string
+          position?: number
+          post_id?: string
+          url?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_links_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_links_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      posts: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          published: boolean
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          published?: boolean
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          published?: boolean
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          click_rate: number
+          created_at: string
+          display_name: string | null
+          id: string
+          instagram_handle: string | null
+          social_links: Json
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          click_rate?: number
+          created_at?: string
+          display_name?: string | null
+          id: string
+          instagram_handle?: string | null
+          social_links?: Json
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          click_rate?: number
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          instagram_handle?: string | null
+          social_links?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      increment_link_click: { Args: { link_id: string }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
