@@ -9,11 +9,19 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StoresRouteImport } from './routes/stores'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RSlugRouteImport } from './routes/r.$slug'
 import { Route as PostPostIdRouteImport } from './routes/post.$postId'
+import { Route as ApiPublicPostbackRouteImport } from './routes/api/public/postback'
 
+const StoresRoute = StoresRouteImport.update({
+  id: '/stores',
+  path: '/stores',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -29,9 +37,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RSlugRoute = RSlugRouteImport.update({
+  id: '/r/$slug',
+  path: '/r/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PostPostIdRoute = PostPostIdRouteImport.update({
   id: '/post/$postId',
   path: '/post/$postId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicPostbackRoute = ApiPublicPostbackRouteImport.update({
+  id: '/api/public/postback',
+  path: '/api/public/postback',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -39,38 +57,79 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/stores': typeof StoresRoute
   '/post/$postId': typeof PostPostIdRoute
+  '/r/$slug': typeof RSlugRoute
+  '/api/public/postback': typeof ApiPublicPostbackRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/stores': typeof StoresRoute
   '/post/$postId': typeof PostPostIdRoute
+  '/r/$slug': typeof RSlugRoute
+  '/api/public/postback': typeof ApiPublicPostbackRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/stores': typeof StoresRoute
   '/post/$postId': typeof PostPostIdRoute
+  '/r/$slug': typeof RSlugRoute
+  '/api/public/postback': typeof ApiPublicPostbackRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/dashboard' | '/post/$postId'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/stores'
+    | '/post/$postId'
+    | '/r/$slug'
+    | '/api/public/postback'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/dashboard' | '/post/$postId'
-  id: '__root__' | '/' | '/auth' | '/dashboard' | '/post/$postId'
+  to:
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/stores'
+    | '/post/$postId'
+    | '/r/$slug'
+    | '/api/public/postback'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/stores'
+    | '/post/$postId'
+    | '/r/$slug'
+    | '/api/public/postback'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   DashboardRoute: typeof DashboardRoute
+  StoresRoute: typeof StoresRoute
   PostPostIdRoute: typeof PostPostIdRoute
+  RSlugRoute: typeof RSlugRoute
+  ApiPublicPostbackRoute: typeof ApiPublicPostbackRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/stores': {
+      id: '/stores'
+      path: '/stores'
+      fullPath: '/stores'
+      preLoaderRoute: typeof StoresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -92,11 +151,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/r/$slug': {
+      id: '/r/$slug'
+      path: '/r/$slug'
+      fullPath: '/r/$slug'
+      preLoaderRoute: typeof RSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/post/$postId': {
       id: '/post/$postId'
       path: '/post/$postId'
       fullPath: '/post/$postId'
       preLoaderRoute: typeof PostPostIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/postback': {
+      id: '/api/public/postback'
+      path: '/api/public/postback'
+      fullPath: '/api/public/postback'
+      preLoaderRoute: typeof ApiPublicPostbackRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -106,7 +179,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   DashboardRoute: DashboardRoute,
+  StoresRoute: StoresRoute,
   PostPostIdRoute: PostPostIdRoute,
+  RSlugRoute: RSlugRoute,
+  ApiPublicPostbackRoute: ApiPublicPostbackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
