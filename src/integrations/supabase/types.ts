@@ -62,6 +62,194 @@ export type Database = {
           },
         ]
       }
+      brands: {
+        Row: {
+          created_at: string
+          default_commission_rate: number
+          id: string
+          logo_url: string | null
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          default_commission_rate?: number
+          id?: string
+          logo_url?: string | null
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          default_commission_rate?: number
+          id?: string
+          logo_url?: string | null
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      catalog_products: {
+        Row: {
+          brand_id: string
+          category: string | null
+          commission_rate: number | null
+          created_at: string
+          id: string
+          image_url: string | null
+          price_inr: number | null
+          product_url: string
+          title: string
+        }
+        Insert: {
+          brand_id: string
+          category?: string | null
+          commission_rate?: number | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          price_inr?: number | null
+          product_url: string
+          title: string
+        }
+        Update: {
+          brand_id?: string
+          category?: string | null
+          commission_rate?: number | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          price_inr?: number | null
+          product_url?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_products_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      creator_secrets: {
+        Row: {
+          created_at: string
+          postback_token: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          postback_token?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          postback_token?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          read: boolean
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          read?: boolean
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          read?: boolean
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          brand_id: string | null
+          commission_amount: number
+          created_at: string
+          creator_earning: number
+          external_order_id: string | null
+          id: string
+          platform_fee: number
+          sale_amount: number
+          status: Database["public"]["Enums"]["order_status"]
+          tracking_link_id: string | null
+          user_id: string
+        }
+        Insert: {
+          brand_id?: string | null
+          commission_amount: number
+          created_at?: string
+          creator_earning: number
+          external_order_id?: string | null
+          id?: string
+          platform_fee: number
+          sale_amount: number
+          status?: Database["public"]["Enums"]["order_status"]
+          tracking_link_id?: string | null
+          user_id: string
+        }
+        Update: {
+          brand_id?: string | null
+          commission_amount?: number
+          created_at?: string
+          creator_earning?: number
+          external_order_id?: string | null
+          id?: string
+          platform_fee?: number
+          sale_amount?: number
+          status?: Database["public"]["Enums"]["order_status"]
+          tracking_link_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_tracking_link_id_fkey"
+            columns: ["tracking_link_id"]
+            isOneToOne: false
+            referencedRelation: "tracking_links"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       posts: {
         Row: {
           created_at: string
@@ -112,8 +300,10 @@ export type Database = {
           display_name: string | null
           id: string
           instagram_handle: string | null
+          lifetime_earnings: number
           social_links: Json
           updated_at: string
+          wallet_balance: number
         }
         Insert: {
           avatar_url?: string | null
@@ -123,8 +313,10 @@ export type Database = {
           display_name?: string | null
           id: string
           instagram_handle?: string | null
+          lifetime_earnings?: number
           social_links?: Json
           updated_at?: string
+          wallet_balance?: number
         }
         Update: {
           avatar_url?: string | null
@@ -134,10 +326,143 @@ export type Database = {
           display_name?: string | null
           id?: string
           instagram_handle?: string | null
+          lifetime_earnings?: number
           social_links?: Json
           updated_at?: string
+          wallet_balance?: number
         }
         Relationships: []
+      }
+      redemptions: {
+        Row: {
+          admin_note: string | null
+          amount: number
+          id: string
+          requested_at: string
+          resolved_at: string | null
+          status: Database["public"]["Enums"]["redeem_status"]
+          upi_or_bank: string
+          user_id: string
+        }
+        Insert: {
+          admin_note?: string | null
+          amount: number
+          id?: string
+          requested_at?: string
+          resolved_at?: string | null
+          status?: Database["public"]["Enums"]["redeem_status"]
+          upi_or_bank: string
+          user_id: string
+        }
+        Update: {
+          admin_note?: string | null
+          amount?: number
+          id?: string
+          requested_at?: string
+          resolved_at?: string | null
+          status?: Database["public"]["Enums"]["redeem_status"]
+          upi_or_bank?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "redemptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tracking_links: {
+        Row: {
+          clicks: number
+          created_at: string
+          id: string
+          post_id: string | null
+          product_id: string
+          slug: string
+          user_id: string
+        }
+        Insert: {
+          clicks?: number
+          created_at?: string
+          id?: string
+          post_id?: string | null
+          product_id: string
+          slug?: string
+          user_id: string
+        }
+        Update: {
+          clicks?: number
+          created_at?: string
+          id?: string
+          post_id?: string | null
+          product_id?: string
+          slug?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tracking_links_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tracking_links_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tracking_links_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wallet_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          note: string | null
+          reference_id: string | null
+          type: Database["public"]["Enums"]["wallet_tx_type"]
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          note?: string | null
+          reference_id?: string | null
+          type: Database["public"]["Enums"]["wallet_tx_type"]
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          note?: string | null
+          reference_id?: string | null
+          type?: Database["public"]["Enums"]["wallet_tx_type"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallet_transactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -145,9 +470,16 @@ export type Database = {
     }
     Functions: {
       increment_link_click: { Args: { link_id: string }; Returns: undefined }
+      increment_tracking_click: { Args: { _slug: string }; Returns: undefined }
+      request_redeem: {
+        Args: { _amount: number; _upi: string }
+        Returns: string
+      }
     }
     Enums: {
-      [_ in never]: never
+      order_status: "pending" | "confirmed" | "cancelled"
+      redeem_status: "requested" | "paid" | "rejected"
+      wallet_tx_type: "sale_credit" | "redeem_debit" | "adjustment"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -274,6 +606,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      order_status: ["pending", "confirmed", "cancelled"],
+      redeem_status: ["requested", "paid", "rejected"],
+      wallet_tx_type: ["sale_credit", "redeem_debit", "adjustment"],
+    },
   },
 } as const
