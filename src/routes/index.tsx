@@ -20,6 +20,7 @@ type FeedPost = {
 function Home() {
   const [posts, setPosts] = useState<FeedPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -33,6 +34,12 @@ function Home() {
       setLoading(false);
     })();
   }, []);
+
+  const visible = posts.filter((p) => {
+    if (!search.trim()) return true;
+    const q = search.toLowerCase();
+    return p.title.toLowerCase().includes(q) || (p.description ?? "").toLowerCase().includes(q);
+  });
 
   return (
     <div className="min-h-screen">
@@ -73,10 +80,18 @@ function Home() {
 
       {/* Feed */}
       <section id="explore" className="max-w-6xl mx-auto px-6 py-12">
-        <h2 className="text-3xl font-serif font-bold mb-6">Latest Posts</h2>
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
+          <h2 className="text-3xl font-serif font-bold">Latest Reviews</h2>
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="🔍 Search reviews by product name…"
+            className="w-full sm:w-80 px-4 py-3 rounded-full border border-border bg-card focus:outline-none focus:ring-2 focus:ring-deep-pink"
+          />
+        </div>
         {loading ? (
           <p className="text-muted-foreground">Loading…</p>
-        ) : posts.length === 0 ? (
+        ) : visible.length === 0 ? (
           <div className="text-center py-16 bg-card rounded-xl border border-border">
             <p className="text-2xl mb-2">🌸</p>
             <p className="text-muted-foreground">No posts yet — be the first to share!</p>
@@ -86,7 +101,7 @@ function Home() {
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {posts.map((p) => (
+            {visible.map((p) => (
               <Link
                 key={p.id}
                 to="/post/$postId"
