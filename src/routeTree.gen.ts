@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as StoresRouteImport } from './routes/stores'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
@@ -17,11 +16,6 @@ import { Route as RSlugRouteImport } from './routes/r.$slug'
 import { Route as PostPostIdRouteImport } from './routes/post.$postId'
 import { Route as ApiPublicPostbackRouteImport } from './routes/api/public/postback'
 
-const StoresRoute = StoresRouteImport.update({
-  id: '/stores',
-  path: '/stores',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -57,7 +51,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
-  '/stores': typeof StoresRoute
   '/post/$postId': typeof PostPostIdRoute
   '/r/$slug': typeof RSlugRoute
   '/api/public/postback': typeof ApiPublicPostbackRoute
@@ -66,7 +59,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
-  '/stores': typeof StoresRoute
   '/post/$postId': typeof PostPostIdRoute
   '/r/$slug': typeof RSlugRoute
   '/api/public/postback': typeof ApiPublicPostbackRoute
@@ -76,7 +68,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
-  '/stores': typeof StoresRoute
   '/post/$postId': typeof PostPostIdRoute
   '/r/$slug': typeof RSlugRoute
   '/api/public/postback': typeof ApiPublicPostbackRoute
@@ -87,7 +78,6 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/dashboard'
-    | '/stores'
     | '/post/$postId'
     | '/r/$slug'
     | '/api/public/postback'
@@ -96,7 +86,6 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/dashboard'
-    | '/stores'
     | '/post/$postId'
     | '/r/$slug'
     | '/api/public/postback'
@@ -105,7 +94,6 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/dashboard'
-    | '/stores'
     | '/post/$postId'
     | '/r/$slug'
     | '/api/public/postback'
@@ -115,7 +103,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   DashboardRoute: typeof DashboardRoute
-  StoresRoute: typeof StoresRoute
   PostPostIdRoute: typeof PostPostIdRoute
   RSlugRoute: typeof RSlugRoute
   ApiPublicPostbackRoute: typeof ApiPublicPostbackRoute
@@ -123,13 +110,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/stores': {
-      id: '/stores'
-      path: '/stores'
-      fullPath: '/stores'
-      preLoaderRoute: typeof StoresRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -179,7 +159,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   DashboardRoute: DashboardRoute,
-  StoresRoute: StoresRoute,
   PostPostIdRoute: PostPostIdRoute,
   RSlugRoute: RSlugRoute,
   ApiPublicPostbackRoute: ApiPublicPostbackRoute,
