@@ -340,7 +340,7 @@ function NewPostTab({ userId, onCreated }: { userId: string; onCreated: () => vo
   return (
     <form onSubmit={submit} className="space-y-4 max-w-2xl">
       <p className="text-sm text-muted-foreground">
-        Tip: paste your tracking URLs from <Link to="/stores" className="text-deep-pink font-semibold underline">Stores</Link> as the link URL so sales credit your wallet.
+        Tip: paste your affiliate tracking URL as the link URL so sales credit your wallet.
       </p>
       <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Post title" required
              className="w-full px-4 py-3 rounded-lg border border-border bg-background" />
