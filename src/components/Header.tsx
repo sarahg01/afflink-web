@@ -36,7 +36,6 @@ export function Header() {
       </Link>
       <div className="flex items-center gap-1 sm:gap-2">
         <Link to="/" className="px-3 py-1.5 text-sm font-semibold rounded-md hover:bg-accent">Explore</Link>
-        <Link to="/stores" className="px-3 py-1.5 text-sm font-semibold rounded-md hover:bg-accent">Stores</Link>
         {user ? (
           <>
             <Link to="/dashboard" className="px-3 py-1.5 text-sm font-semibold rounded-md hover:bg-accent inline-flex items-center gap-1.5">
