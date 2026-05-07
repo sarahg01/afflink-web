@@ -29,25 +29,52 @@ type AffLink = { id: string; label: string; url: string };
 
 function PostPage() {
   const { postId } = Route.useParams();
+  const { user } = useAuth();
   const [post, setPost] = useState<Post | null>(null);
   const [links, setLinks] = useState<AffLink[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [verified, setVerified] = useState(false);
+  const [following, setFollowing] = useState(false);
 
   useEffect(() => {
     (async () => {
-      const [{ data: p }, { data: l }] = await Promise.all([
+      const [{ data: p }, { data: l }, { data: v }] = await Promise.all([
         supabase.from("posts")
           .select("id, title, description, thumbnail_url, user_id, profiles(display_name, avatar_url, bio, instagram_handle, social_links)")
           .eq("id", postId).maybeSingle(),
         supabase.from("affiliate_links")
           .select("id, label, url").eq("post_id", postId).order("position"),
+        supabase.rpc("post_is_verified", { _post_id: postId }),
       ]);
       setPost(p as any);
       setLinks((l as any) ?? []);
+      setVerified(Boolean(v));
       setLoading(false);
     })();
   }, [postId]);
+
+  useEffect(() => {
+    if (!user || !post) return;
+    (async () => {
+      const { data } = await supabase.from("follows")
+        .select("follower_id").eq("follower_id", user.id).eq("following_id", post.user_id).maybeSingle();
+      setFollowing(Boolean(data));
+    })();
+  }, [user, post]);
+
+  const toggleFollow = async () => {
+    if (!user || !post) return toast.error("Sign in to follow");
+    if (post.user_id === user.id) return;
+    if (following) {
+      await supabase.from("follows").delete().eq("follower_id", user.id).eq("following_id", post.user_id);
+      setFollowing(false);
+    } else {
+      await supabase.from("follows").insert({ follower_id: user.id, following_id: post.user_id });
+      setFollowing(true);
+      toast.success("Following!");
+    }
+  };
 
   const trackClick = async (id: string, url: string) => {
     await supabase.rpc("increment_link_click", { link_id: id });
