@@ -39,7 +39,7 @@ function Dashboard() {
   const [notifs, setNotifs] = useState<Notif[]>([]);
   const [stats, setStats] = useState({ totalClicks: 0, totalPosts: 0, salesCount: 0 });
   const [postbackToken, setPostbackToken] = useState<string>("");
-  const [tab, setTab] = useState<"overview" | "posts" | "new" | "wallet" | "profile">("overview");
+  const [tab, setTab] = useState<"overview" | "posts" | "saved" | "new" | "wallet" | "profile">("overview");
 
   useEffect(() => {
     if (!authLoading && !user) router.navigate({ to: "/auth" });
