@@ -39,7 +39,7 @@ function Dashboard() {
   const [notifs, setNotifs] = useState<Notif[]>([]);
   const [stats, setStats] = useState({ totalClicks: 0, totalPosts: 0, salesCount: 0 });
   const [postbackToken, setPostbackToken] = useState<string>("");
-  const [tab, setTab] = useState<"overview" | "posts" | "new" | "wallet" | "profile">("overview");
+  const [tab, setTab] = useState<"overview" | "posts" | "saved" | "new" | "wallet" | "profile">("overview");
 
   useEffect(() => {
     if (!authLoading && !user) router.navigate({ to: "/auth" });
@@ -107,7 +107,7 @@ function Dashboard() {
 
         {/* Tabs */}
         <div className="flex gap-1 mt-8 border-b border-border overflow-x-auto">
-          {(["overview", "posts", "new", "wallet", "profile"] as const).map((t) => (
+          {(["overview", "posts", "saved", "new", "wallet", "profile"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
@@ -123,6 +123,7 @@ function Dashboard() {
         <div className="mt-6">
           {tab === "overview" && <OverviewTab orders={orders} notifs={notifs} onSeen={load} />}
           {tab === "posts" && <PostsTab posts={posts} onChange={load} />}
+          {tab === "saved" && <SavedTab userId={user.id} />}
           {tab === "new" && <NewPostTab userId={user.id} onCreated={() => { setTab("posts"); load(); }} />}
           {tab === "wallet" && <WalletTab profile={profile} postbackToken={postbackToken} onChange={load} />}
           {tab === "profile" && <ProfileTab profile={profile} onSaved={load} />}
@@ -300,6 +301,7 @@ function PostsTab({ posts, onChange }: { posts: Post[]; onChange: () => void }) 
 function NewPostTab({ userId, onCreated }: { userId: string; onCreated: () => void }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [niche, setNiche] = useState("");
   const [thumb, setThumb] = useState<File | null>(null);
   const [links, setLinks] = useState<{ label: string; url: string }[]>([{ label: "", url: "" }]);
   const [saving, setSaving] = useState(false);
@@ -317,7 +319,7 @@ function NewPostTab({ userId, onCreated }: { userId: string; onCreated: () => vo
       }
       const { data: post, error } = await supabase
         .from("posts")
-        .insert({ user_id: userId, title, description, thumbnail_url })
+        .insert({ user_id: userId, title, description, thumbnail_url, niche: niche || null })
         .select().single();
       if (error) throw error;
 
@@ -346,6 +348,13 @@ function NewPostTab({ userId, onCreated }: { userId: string; onCreated: () => vo
              className="w-full px-4 py-3 rounded-lg border border-border bg-background" />
       <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description / review"
                 rows={4} className="w-full px-4 py-3 rounded-lg border border-border bg-background" />
+      <select value={niche} onChange={(e) => setNiche(e.target.value)}
+              className="w-full px-4 py-3 rounded-lg border border-border bg-background">
+        <option value="">Select a niche (optional)</option>
+        {["beauty", "tech", "fashion", "home", "fitness", "food"].map((n) => (
+          <option key={n} value={n}>{n}</option>
+        ))}
+      </select>
       <div>
         <label className="block text-sm font-semibold mb-1">Thumbnail</label>
         <input type="file" accept="image/*" onChange={(e) => setThumb(e.target.files?.[0] ?? null)} />
@@ -435,5 +444,49 @@ function ProfileTab({ profile, onSaved }: { profile: Profile; onSaved: () => voi
         {saving ? "Saving…" : "Save profile"}
       </button>
     </form>
+  );
+}
+
+function SavedTab({ userId }: { userId: string }) {
+  const [items, setItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from("saves")
+        .select("post_id, posts(id, title, thumbnail_url, profiles(display_name))")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false });
+      setItems((data as any) ?? []);
+      setLoading(false);
+    })();
+  }, [userId]);
+
+  const remove = async (postId: string) => {
+    await supabase.from("saves").delete().eq("user_id", userId).eq("post_id", postId);
+    setItems((cur) => cur.filter((i) => i.post_id !== postId));
+  };
+
+  if (loading) return <p className="text-muted-foreground">Loading…</p>;
+  if (items.length === 0) return <p className="text-muted-foreground">Nothing saved yet. Tap the bookmark on any review to save it.</p>;
+  return (
+    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {items.map((it) => (
+        <div key={it.post_id} className="bg-card border border-border rounded-xl overflow-hidden">
+          <Link to="/post/$postId" params={{ postId: it.post_id }} className="block aspect-[4/3] bg-gradient-to-br from-accent to-rose">
+            {it.posts?.thumbnail_url && <img src={it.posts.thumbnail_url} alt="" className="w-full h-full object-cover" />}
+          </Link>
+          <div className="p-3 flex items-center justify-between gap-2">
+            <div className="min-w-0">
+              <p className="font-semibold text-sm line-clamp-1">{it.posts?.title}</p>
+              <p className="text-xs text-muted-foreground line-clamp-1">by {it.posts?.profiles?.display_name ?? "creator"}</p>
+            </div>
+            <button onClick={() => remove(it.post_id)} className="text-muted-foreground hover:text-destructive">
+              <Trash2 size={16} />
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }

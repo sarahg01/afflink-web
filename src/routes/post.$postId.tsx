@@ -2,7 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
-import { Instagram, ExternalLink, X } from "lucide-react";
+import { Instagram, ExternalLink, X, BadgeCheck, UserPlus, UserCheck } from "lucide-react";
+import { useAuth } from "@/lib/auth";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/post/$postId")({
   component: PostPage,
@@ -27,25 +29,52 @@ type AffLink = { id: string; label: string; url: string };
 
 function PostPage() {
   const { postId } = Route.useParams();
+  const { user } = useAuth();
   const [post, setPost] = useState<Post | null>(null);
   const [links, setLinks] = useState<AffLink[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [verified, setVerified] = useState(false);
+  const [following, setFollowing] = useState(false);
 
   useEffect(() => {
     (async () => {
-      const [{ data: p }, { data: l }] = await Promise.all([
+      const [{ data: p }, { data: l }, { data: v }] = await Promise.all([
         supabase.from("posts")
           .select("id, title, description, thumbnail_url, user_id, profiles(display_name, avatar_url, bio, instagram_handle, social_links)")
           .eq("id", postId).maybeSingle(),
         supabase.from("affiliate_links")
           .select("id, label, url").eq("post_id", postId).order("position"),
+        supabase.rpc("post_is_verified", { _post_id: postId }),
       ]);
       setPost(p as any);
       setLinks((l as any) ?? []);
+      setVerified(Boolean(v));
       setLoading(false);
     })();
   }, [postId]);
+
+  useEffect(() => {
+    if (!user || !post) return;
+    (async () => {
+      const { data } = await supabase.from("follows")
+        .select("follower_id").eq("follower_id", user.id).eq("following_id", post.user_id).maybeSingle();
+      setFollowing(Boolean(data));
+    })();
+  }, [user, post]);
+
+  const toggleFollow = async () => {
+    if (!user || !post) return toast.error("Sign in to follow");
+    if (post.user_id === user.id) return;
+    if (following) {
+      await supabase.from("follows").delete().eq("follower_id", user.id).eq("following_id", post.user_id);
+      setFollowing(false);
+    } else {
+      await supabase.from("follows").insert({ follower_id: user.id, following_id: post.user_id });
+      setFollowing(true);
+      toast.success("Following!");
+    }
+  };
 
   const trackClick = async (id: string, url: string) => {
     await supabase.rpc("increment_link_click", { link_id: id });
@@ -70,16 +99,31 @@ function PostPage() {
           ) : "🌸"}
         </div>
 
-        <h1 className="mt-6 text-4xl font-serif font-bold">{post.title}</h1>
+        <div className="mt-6 flex items-center gap-3 flex-wrap">
+          <h1 className="text-4xl font-serif font-bold w-full">{post.title}</h1>
+          {verified && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-deep-pink/10 text-deep-pink text-xs font-semibold">
+              <BadgeCheck size={14} /> Verified review · real sales
+            </span>
+          )}
+        </div>
 
         <div className="mt-4 flex items-center gap-3">
           {post.profiles?.avatar_url && (
             <img src={post.profiles.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover" />
           )}
-          <div>
+          <div className="flex-1">
             <p className="font-semibold text-sm">{post.profiles?.display_name}</p>
             {post.profiles?.bio && <p className="text-xs text-muted-foreground">{post.profiles.bio}</p>}
           </div>
+          {user && user.id !== post.user_id && (
+            <button onClick={toggleFollow}
+                    className={`px-4 py-2 rounded-full text-sm font-semibold inline-flex items-center gap-1.5 ${
+                      following ? "bg-accent text-foreground" : "bg-deep-pink text-primary-foreground hover:opacity-90"
+                    }`}>
+              {following ? <><UserCheck size={14} /> Following</> : <><UserPlus size={14} /> Follow</>}
+            </button>
+          )}
         </div>
 
         {post.description && (

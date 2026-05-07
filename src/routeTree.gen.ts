@@ -14,6 +14,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RSlugRouteImport } from './routes/r.$slug'
 import { Route as PostPostIdRouteImport } from './routes/post.$postId'
+import { Route as NNicheRouteImport } from './routes/n.$niche'
 import { Route as ApiPublicPostbackRouteImport } from './routes/api/public/postback'
 
 const DashboardRoute = DashboardRouteImport.update({
@@ -41,6 +42,11 @@ const PostPostIdRoute = PostPostIdRouteImport.update({
   path: '/post/$postId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NNicheRoute = NNicheRouteImport.update({
+  id: '/n/$niche',
+  path: '/n/$niche',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPostbackRoute = ApiPublicPostbackRouteImport.update({
   id: '/api/public/postback',
   path: '/api/public/postback',
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/n/$niche': typeof NNicheRoute
   '/post/$postId': typeof PostPostIdRoute
   '/r/$slug': typeof RSlugRoute
   '/api/public/postback': typeof ApiPublicPostbackRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/n/$niche': typeof NNicheRoute
   '/post/$postId': typeof PostPostIdRoute
   '/r/$slug': typeof RSlugRoute
   '/api/public/postback': typeof ApiPublicPostbackRoute
@@ -68,6 +76,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/n/$niche': typeof NNicheRoute
   '/post/$postId': typeof PostPostIdRoute
   '/r/$slug': typeof RSlugRoute
   '/api/public/postback': typeof ApiPublicPostbackRoute
@@ -78,6 +87,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/dashboard'
+    | '/n/$niche'
     | '/post/$postId'
     | '/r/$slug'
     | '/api/public/postback'
@@ -86,6 +96,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/dashboard'
+    | '/n/$niche'
     | '/post/$postId'
     | '/r/$slug'
     | '/api/public/postback'
@@ -94,6 +105,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/dashboard'
+    | '/n/$niche'
     | '/post/$postId'
     | '/r/$slug'
     | '/api/public/postback'
@@ -103,6 +115,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   DashboardRoute: typeof DashboardRoute
+  NNicheRoute: typeof NNicheRoute
   PostPostIdRoute: typeof PostPostIdRoute
   RSlugRoute: typeof RSlugRoute
   ApiPublicPostbackRoute: typeof ApiPublicPostbackRoute
@@ -145,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PostPostIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/n/$niche': {
+      id: '/n/$niche'
+      path: '/n/$niche'
+      fullPath: '/n/$niche'
+      preLoaderRoute: typeof NNicheRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/postback': {
       id: '/api/public/postback'
       path: '/api/public/postback'
@@ -159,6 +179,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   DashboardRoute: DashboardRoute,
+  NNicheRoute: NNicheRoute,
   PostPostIdRoute: PostPostIdRoute,
   RSlugRoute: RSlugRoute,
   ApiPublicPostbackRoute: ApiPublicPostbackRoute,
@@ -166,12 +187,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
