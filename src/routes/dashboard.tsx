@@ -107,7 +107,7 @@ function Dashboard() {
 
         {/* Tabs */}
         <div className="flex gap-1 mt-8 border-b border-border overflow-x-auto">
-          {(["overview", "posts", "new", "wallet", "profile"] as const).map((t) => (
+          {(["overview", "posts", "saved", "new", "wallet", "profile"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
@@ -123,6 +123,7 @@ function Dashboard() {
         <div className="mt-6">
           {tab === "overview" && <OverviewTab orders={orders} notifs={notifs} onSeen={load} />}
           {tab === "posts" && <PostsTab posts={posts} onChange={load} />}
+          {tab === "saved" && <SavedTab userId={user.id} />}
           {tab === "new" && <NewPostTab userId={user.id} onCreated={() => { setTab("posts"); load(); }} />}
           {tab === "wallet" && <WalletTab profile={profile} postbackToken={postbackToken} onChange={load} />}
           {tab === "profile" && <ProfileTab profile={profile} onSaved={load} />}
