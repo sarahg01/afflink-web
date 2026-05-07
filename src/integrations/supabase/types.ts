@@ -151,6 +151,24 @@ export type Database = {
         }
         Relationships: []
       }
+      follows: {
+        Row: {
+          created_at: string
+          follower_id: string
+          following_id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          following_id: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          following_id?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           body: string | null
@@ -255,6 +273,7 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          niche: string | null
           published: boolean
           thumbnail_url: string | null
           title: string
@@ -265,6 +284,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          niche?: string | null
           published?: boolean
           thumbnail_url?: string | null
           title: string
@@ -275,6 +295,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          niche?: string | null
           published?: boolean
           thumbnail_url?: string | null
           title?: string
@@ -374,6 +395,24 @@ export type Database = {
           },
         ]
       }
+      saves: {
+        Row: {
+          created_at: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       tracking_links: {
         Row: {
           clicks: number
@@ -426,6 +465,24 @@ export type Database = {
           },
         ]
       }
+      upvotes: {
+        Row: {
+          created_at: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       wallet_transactions: {
         Row: {
           amount: number
@@ -471,6 +528,7 @@ export type Database = {
     Functions: {
       increment_link_click: { Args: { link_id: string }; Returns: undefined }
       increment_tracking_click: { Args: { _slug: string }; Returns: undefined }
+      post_is_verified: { Args: { _post_id: string }; Returns: boolean }
       request_redeem: {
         Args: { _amount: number; _upi: string }
         Returns: string
