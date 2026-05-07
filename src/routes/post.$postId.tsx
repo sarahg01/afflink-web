@@ -99,16 +99,31 @@ function PostPage() {
           ) : "🌸"}
         </div>
 
-        <h1 className="mt-6 text-4xl font-serif font-bold">{post.title}</h1>
+        <div className="mt-6 flex items-center gap-3 flex-wrap">
+          <h1 className="text-4xl font-serif font-bold w-full">{post.title}</h1>
+          {verified && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-deep-pink/10 text-deep-pink text-xs font-semibold">
+              <BadgeCheck size={14} /> Verified review · real sales
+            </span>
+          )}
+        </div>
 
         <div className="mt-4 flex items-center gap-3">
           {post.profiles?.avatar_url && (
             <img src={post.profiles.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover" />
           )}
-          <div>
+          <div className="flex-1">
             <p className="font-semibold text-sm">{post.profiles?.display_name}</p>
             {post.profiles?.bio && <p className="text-xs text-muted-foreground">{post.profiles.bio}</p>}
           </div>
+          {user && user.id !== post.user_id && (
+            <button onClick={toggleFollow}
+                    className={`px-4 py-2 rounded-full text-sm font-semibold inline-flex items-center gap-1.5 ${
+                      following ? "bg-accent text-foreground" : "bg-deep-pink text-primary-foreground hover:opacity-90"
+                    }`}>
+              {following ? <><UserCheck size={14} /> Following</> : <><UserPlus size={14} /> Follow</>}
+            </button>
+          )}
         </div>
 
         {post.description && (
