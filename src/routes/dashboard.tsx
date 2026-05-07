@@ -318,7 +318,7 @@ function NewPostTab({ userId, onCreated }: { userId: string; onCreated: () => vo
       }
       const { data: post, error } = await supabase
         .from("posts")
-        .insert({ user_id: userId, title, description, thumbnail_url })
+        .insert({ user_id: userId, title, description, thumbnail_url, niche: niche || null })
         .select().single();
       if (error) throw error;
 
