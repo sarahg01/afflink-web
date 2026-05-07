@@ -446,3 +446,47 @@ function ProfileTab({ profile, onSaved }: { profile: Profile; onSaved: () => voi
     </form>
   );
 }
+
+function SavedTab({ userId }: { userId: string }) {
+  const [items, setItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from("saves")
+        .select("post_id, posts(id, title, thumbnail_url, profiles(display_name))")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false });
+      setItems((data as any) ?? []);
+      setLoading(false);
+    })();
+  }, [userId]);
+
+  const remove = async (postId: string) => {
+    await supabase.from("saves").delete().eq("user_id", userId).eq("post_id", postId);
+    setItems((cur) => cur.filter((i) => i.post_id !== postId));
+  };
+
+  if (loading) return <p className="text-muted-foreground">Loading…</p>;
+  if (items.length === 0) return <p className="text-muted-foreground">Nothing saved yet. Tap the bookmark on any review to save it.</p>;
+  return (
+    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {items.map((it) => (
+        <div key={it.post_id} className="bg-card border border-border rounded-xl overflow-hidden">
+          <Link to="/post/$postId" params={{ postId: it.post_id }} className="block aspect-[4/3] bg-gradient-to-br from-accent to-rose">
+            {it.posts?.thumbnail_url && <img src={it.posts.thumbnail_url} alt="" className="w-full h-full object-cover" />}
+          </Link>
+          <div className="p-3 flex items-center justify-between gap-2">
+            <div className="min-w-0">
+              <p className="font-semibold text-sm line-clamp-1">{it.posts?.title}</p>
+              <p className="text-xs text-muted-foreground line-clamp-1">by {it.posts?.profiles?.display_name ?? "creator"}</p>
+            </div>
+            <button onClick={() => remove(it.post_id)} className="text-muted-foreground hover:text-destructive">
+              <Trash2 size={16} />
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
