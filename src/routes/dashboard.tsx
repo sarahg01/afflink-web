@@ -300,6 +300,7 @@ function PostsTab({ posts, onChange }: { posts: Post[]; onChange: () => void }) 
 function NewPostTab({ userId, onCreated }: { userId: string; onCreated: () => void }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [niche, setNiche] = useState("");
   const [thumb, setThumb] = useState<File | null>(null);
   const [links, setLinks] = useState<{ label: string; url: string }[]>([{ label: "", url: "" }]);
   const [saving, setSaving] = useState(false);
