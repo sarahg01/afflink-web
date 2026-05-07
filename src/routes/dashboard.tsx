@@ -347,6 +347,13 @@ function NewPostTab({ userId, onCreated }: { userId: string; onCreated: () => vo
              className="w-full px-4 py-3 rounded-lg border border-border bg-background" />
       <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description / review"
                 rows={4} className="w-full px-4 py-3 rounded-lg border border-border bg-background" />
+      <select value={niche} onChange={(e) => setNiche(e.target.value)}
+              className="w-full px-4 py-3 rounded-lg border border-border bg-background">
+        <option value="">Select a niche (optional)</option>
+        {["beauty", "tech", "fashion", "home", "fitness", "food"].map((n) => (
+          <option key={n} value={n}>{n}</option>
+        ))}
+      </select>
       <div>
         <label className="block text-sm font-semibold mb-1">Thumbnail</label>
         <input type="file" accept="image/*" onChange={(e) => setThumb(e.target.files?.[0] ?? null)} />
