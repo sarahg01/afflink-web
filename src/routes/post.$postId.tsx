@@ -2,7 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
-import { Instagram, ExternalLink, X } from "lucide-react";
+import { Instagram, ExternalLink, X, BadgeCheck, UserPlus, UserCheck } from "lucide-react";
+import { useAuth } from "@/lib/auth";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/post/$postId")({
   component: PostPage,
