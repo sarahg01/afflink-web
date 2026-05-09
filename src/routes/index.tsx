@@ -165,7 +165,7 @@ function Home() {
           <div className="mt-16 grid grid-cols-3 gap-4 max-w-2xl mx-auto animate-[fade-up_0.6s_ease-out_0.4s_both]">
             {[
               { v: "100%", l: "Verified sales" },
-              { v: "20%", l: "Flat platform fee" },
+              { v: "80%", l: "Creator payout" },
               { v: "₹50", l: "Min payout" },
             ].map((s) => (
               <div key={s.l} className="glass rounded-2xl border border-border px-3 py-5">
